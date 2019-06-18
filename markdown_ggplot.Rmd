@@ -1,0 +1,7 @@
+---
+title: "Graphics with ggplot"
+author: "Sofia"
+date: "19/6/2019"
+output: html_document
+---
+
