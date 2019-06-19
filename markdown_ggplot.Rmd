@@ -5,3 +5,138 @@ date: "19/6/2019"
 output: html_document
 ---
 
+## libraries and R global environment
+library(tidyverse)
+
+Environment: 1)Tools + 2)Global options + 3) RMarkdonw + 4) Unclick 'show inline for all R Markdowns documents
+
+## exercise chapter 5
+
+Data from: https://github.com/OHI-science/data-science-training
+then click on: 1)data + 2)OHI_global_data + 3)raw and 4) copy link inside the 'chunk'
+
+```{r read the data}
+library(tidyverse)
+
+ohi_data<-read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/OHI_global_data.csv")
+```
+
+Explore the data: head(), str(), summary(), dim()
+
+## ggplot (only works with dataframes!!)
+
+```{r start ggplot, echo=FALSE}
+
+ggplot(data = ohi_data, aes(x=georegion_one, y=OHI_score)) + 
+  geom_point()
+
+ggplot(data = ohi_data, aes(x=georegion_one, y=OHI_score)) + 
+  geom_jitter(width = 0.2)
+
+```
+aes stands for aesthetics
+geom is the geometric object
+geom_point : in vertical lines
+geom_jitter : in more sparsed lines
+
+## Boxplot
+```{r boxplot}
+
+ggplot(data = ohi_data, aes(x=georegion_one))+
+  geom_bar()
+
+
+```
+
+## Histograms
+```{r histograms}
+ggplot(data = ohi_data, aes(x=HDI))+
+  geom_histogram()
+```
+
+Multiple geom exploration
+```{r multiple geoms}
+
+ohi_summary<- read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/OHI_scores_georegion_summary.csv")
+
+ggplot(data=ohi_summary, aes(x=georegions, y=OHI_score_average))+
+  geom_bar(stat="identity", col="Blue")+
+  geom_jitter(data=ohi_data, aes(x=georegion_one, y=OHI_score, width = 0.2, col="Orange"))
+
+
+# Aesthetics, either to write it on ggplot r geom_point
+ggplot(data = ohi_data, aes(y=OHI_score, x = HDI, color=georegion_one)) +
+  geom_point()
+
+ggplot(data = ohi_data) +
+  geom_point(aes(y = OHI_score, x = HDI, color=georegion_one))  
+
+## Size
+
+ggplot(data = ohi_data, aes(x = OHI_score, y = HDI, size = coastal_pop, color=coastal_pop)) + 
+  geom_point()
+
+```
+If we are adding more layers it's better to add the things on geom_point instead of using ggplot
+
+Adding a third discreate variable
+```{r}
+ggplot(data = ohi_data, aes(x=OHI_score, y=HDI, color=georegion_one))+
+  geom_point()
+
+ggplot(data = ohi_data, aes(x=OHI_score, y=HDI, shape=georegion_one))+
+  geom_point()
+
+```
+
+Themes
+```{r}
+ggplot(data = ohi_data, aes(x = OHI_score, y = HDI)) + 
+  geom_point() 
+
+source('https://raw.githubusercontent.com/OHI-Science/ohiprep/master/src/R/scatterTheme.txt')       
+# To make big labes for presentations
+ggplot(data = ohi_data, aes(x = OHI_score, y = HDI)) + 
+  geom_point() + 
+   scatterTheme
+```
+
+Change labels
+```{r}
+ggplot(data = ohi_data, aes(x = OHI_score, y = HDI))+
+  geom_point()+
+  labs(y="OHI score, 2017",
+       x="Human Development Index",
+       title = "Countries with high human development have more sustainable oceans",
+       color = "Georegion") +  # if color doesn't work, use "fill"
+     theme_bw()
+
+```
+
+Colors
+```{r}
+install.packages("RColorBrewer")
+library(RColorBrewer)
+
+display.brewer.all()
+
+my_palette<- brewer.pal(n=9, "YlOrRd")
+
+ggplot(data=ohi_data, aes(x=OHI_score, y=OHI_trend,
+                          color=HDI))+
+  geom_point(size=3)+
+  scale_colour_gradientn(colors=my_palette)
+
+ggplot(data=ohi_data, aes(x=OHI_score, y=OHI_trend,
+                          color=HDI))+
+  geom_point(size=3)+
+  scale_colour_gradientn(colors=c("blue", "red"))
+
+ggplot(data=ohi_data, aes(x=OHI_score, y=OHI_trend,
+                          color=georegion_one))+
+  geom_point(size=3)+
+  scale_color_manual(values=my_palette)
+
+```
+
+
